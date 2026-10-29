@@ -7,6 +7,13 @@ const serviceData = {
   relocation: { title: 'Home Relocation Services', summary: 'Moving homes made simpler.', items: ['Home shifting assistance', 'Packing material coordination', 'Fragile-item packing', 'Furniture preparation', 'Loading, unloading & transport coordination', 'Unpacking & basic placement'], note: 'Transport scope, timing and special handling are confirmed after reviewing the move requirements.' }
 };
 
+const enquiryContacts = {
+  solar: { name: 'Stephen', phone: '918428832854' },
+  events: { name: 'Kiruthika', phone: '918056554656' },
+  default: { name: 'Robinson', phone: '918220083162' }
+};
+const getEnquiryContact = service => /solar/i.test(service || '') ? enquiryContacts.solar : /event/i.test(service || '') ? enquiryContacts.events : enquiryContacts.default;
+
 const header = document.querySelector('.site-header');
 const backTop = document.querySelector('.back-top');
 const menuToggle = document.querySelector('.menu-toggle');
@@ -54,8 +61,9 @@ document.querySelectorAll('[data-service]').forEach(button => button.addEventLis
   document.querySelector('#dialog-summary').textContent = service.summary;
   document.querySelector('#dialog-list').innerHTML = service.items.map(item => `<span>${item}</span>`).join('');
   const note = document.querySelector('#dialog-note'); note.textContent = service.note || ''; note.hidden = !service.note;
-  const message = `Hello JeRoSt Multi Service Providers, I would like to enquire about ${service.title}.`;
-  document.querySelector('#dialog-enquire').href = `https://wa.me/918220083162?text=${encodeURIComponent(message)}`;
+  const contact = getEnquiryContact(service.title);
+  const message = `Hello ${contact.name}, I would like to enquire about ${service.title} through JeRoSt Multi Service Providers.`;
+  document.querySelector('#dialog-enquire').href = `https://wa.me/${contact.phone}?text=${encodeURIComponent(message)}`;
   dialog.showModal();
 }));
 document.querySelector('.dialog-close').addEventListener('click', () => dialog.close());
@@ -64,10 +72,21 @@ dialog.addEventListener('click', event => { if (event.target === dialog) dialog.
 document.querySelector('#enquiry-form').addEventListener('submit', event => {
   event.preventDefault(); const form = event.currentTarget; const status = form.querySelector('.form-status');
   if (!form.checkValidity()) { status.textContent = 'Please complete the required fields before continuing.'; form.reportValidity(); return; }
-  const data = new FormData(form);
-  const message = `Hello JeRoSt Multi Service Providers,\n\nName: ${data.get('name')}\nPhone: ${data.get('phone')}\nEmail: ${data.get('email') || 'Not provided'}\nLocation: ${data.get('location')}\nService: ${data.get('service')}\nPreferred contact: ${data.get('contactMethod')}\n\nRequirement: ${data.get('message')}`;
-  window.open(`https://wa.me/918220083162?text=${encodeURIComponent(message)}`, '_blank', 'noopener'); status.textContent = '';
+  const data = new FormData(form); const contact = getEnquiryContact(data.get('service'));
+  const message = `Hello ${contact.name},\n\nI am contacting you through JeRoSt Multi Service Providers.\n\nName: ${data.get('name')}\nPhone: ${data.get('phone')}\nEmail: ${data.get('email') || 'Not provided'}\nLocation: ${data.get('location')}\nService: ${data.get('service')}\nPreferred contact: ${data.get('contactMethod')}\n\nRequirement: ${data.get('message')}`;
+  window.open(`https://wa.me/${contact.phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener'); status.textContent = '';
 });
+
+const enquiryForm = document.querySelector('#enquiry-form');
+const updateEnquiryRecipient = () => {
+  const contact = getEnquiryContact(enquiryForm.elements.service.value);
+  const note = enquiryForm.querySelector('.form-note');
+  const button = enquiryForm.querySelector('button[type="submit"]');
+  if (note) note.textContent = `This enquiry will open in WhatsApp with ${contact.name}. Nothing is stored on this site.`;
+  if (button) button.textContent = `Continue with ${contact.name} on WhatsApp →`;
+};
+enquiryForm.elements.service.addEventListener('change', updateEnquiryRecipient);
+updateEnquiryRecipient();
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 document.querySelectorAll('.footer p').forEach(p => {

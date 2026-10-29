@@ -158,3 +158,12 @@ h2{font-size:clamp(2rem,3.35vw,3.45rem);line-height:1.12;letter-spacing:-.042em}
   .services-nav:hover:before,.services-nav:focus-within:before{opacity:1;visibility:visible}
   .services-nav:hover .mega-menu,.services-nav:focus-within .mega-menu{transform:translateY(0)}
 }
+
+/* Flexible service contacts on the Contact page */
+.contact-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+.contact-card{display:flex;flex-direction:column;align-items:flex-start}
+.contact-card p{margin:4px 0 12px;color:var(--muted)}
+.contact-card a{margin-top:auto}
+.contact-card.primary-contact{border-color:var(--copper);box-shadow:0 12px 30px rgba(18,63,59,.06)}
+@media(max-width:1100px) and (min-width:901px){.contact-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:900px){.contact-cards{grid-template-columns:1fr}}

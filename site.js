@@ -7,6 +7,13 @@ const serviceLinks = [
   ['relocation.html','Home Relocation','A calmer way to move.']
 ];
 
+const enquiryContacts = {
+  solar: { name: 'Stephen', phone: '918428832854' },
+  events: { name: 'Kiruthika', phone: '918056554656' },
+  default: { name: 'Robinson', phone: '918220083162' }
+};
+const getEnquiryContact = service => /solar/i.test(service || '') ? enquiryContacts.solar : /event/i.test(service || '') ? enquiryContacts.events : enquiryContacts.default;
+
 const currentPage = location.pathname.split('/').pop() || 'index.html';
 if (currentPage === 'team.html') location.replace('about.html#team');
 const headerMarkup = `
@@ -58,14 +65,28 @@ if ('IntersectionObserver' in window) {
 } else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));
 
 document.querySelectorAll('[data-wa-service]').forEach(link => {
-  link.href = `https://wa.me/918220083162?text=${encodeURIComponent(`Hello JeRoSt Multi Service Providers, I would like to enquire about ${link.dataset.waService}.`)}`;
+  const contact = getEnquiryContact(link.dataset.waService);
+  link.href = `https://wa.me/${contact.phone}?text=${encodeURIComponent(`Hello ${contact.name}, I would like to enquire about ${link.dataset.waService} through JeRoSt Multi Service Providers.`)}`;
 });
 
 document.querySelector('#enquiry-form')?.addEventListener('submit', event => {
   event.preventDefault(); const form=event.currentTarget; if(!form.checkValidity()){form.reportValidity();return}
-  const d=new FormData(form); const text=`Hello JeRoSt Multi Service Providers,\n\nName: ${d.get('name')}\nPhone: ${d.get('phone')}\nEmail: ${d.get('email')||'Not provided'}\nLocation: ${d.get('location')}\nService: ${d.get('service')}\nPreferred contact: ${d.get('contactMethod')}\n\nRequirement: ${d.get('message')}`;
-  window.open(`https://wa.me/918220083162?text=${encodeURIComponent(text)}`,'_blank','noopener');
+  const d=new FormData(form); const contact=getEnquiryContact(d.get('service')); const text=`Hello ${contact.name},\n\nI am contacting you through JeRoSt Multi Service Providers.\n\nName: ${d.get('name')}\nPhone: ${d.get('phone')}\nEmail: ${d.get('email')||'Not provided'}\nLocation: ${d.get('location')}\nService: ${d.get('service')}\nPreferred contact: ${d.get('contactMethod')}\n\nRequirement: ${d.get('message')}`;
+  window.open(`https://wa.me/${contact.phone}?text=${encodeURIComponent(text)}`,'_blank','noopener');
 });
+
+const enquiryForm = document.querySelector('#enquiry-form');
+if (enquiryForm) {
+  const updateEnquiryRecipient = () => {
+    const contact = getEnquiryContact(enquiryForm.elements.service.value);
+    const note = enquiryForm.querySelector('.form-note');
+    const button = enquiryForm.querySelector('button[type="submit"]');
+    if (note) note.textContent = `This enquiry will open in WhatsApp with ${contact.name}. Nothing is stored on this site.`;
+    if (button) button.textContent = `Continue with ${contact.name} on WhatsApp →`;
+  };
+  enquiryForm.elements.service.addEventListener('change', updateEnquiryRecipient);
+  updateEnquiryRecipient();
+}
 
 const detailedContent = {
   'it-security.html': {
