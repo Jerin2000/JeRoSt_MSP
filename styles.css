@@ -150,3 +150,11 @@ h2{font-size:clamp(2rem,3.35vw,3.45rem);line-height:1.12;letter-spacing:-.042em}
 .section-heading>p,.detail-intro>p,.content-copy p{font-size:.96rem;line-height:1.72}
 @media(max-width:800px){h2,.section-heading h2,.promise h2,.commitment-section h2{font-size:clamp(1.9rem,6.5vw,2.8rem)}.page-cta h2,.final-cta h2,.section-kicker h2{font-size:clamp(1.85rem,6vw,2.55rem)}.content-copy h2,.detail-intro h2{font-size:clamp(1.8rem,5.8vw,2.45rem)}}
 @media(max-width:560px){h2,.section-heading h2,.promise h2,.commitment-section h2{font-size:clamp(1.75rem,8vw,2.35rem);letter-spacing:-.032em}.page-cta h2,.final-cta h2,.section-kicker h2,.content-copy h2,.detail-intro h2{font-size:clamp(1.7rem,7.5vw,2.2rem);letter-spacing:-.03em}.card-body h3,.team-card h3,.service-detail-card h2,.info-panel h3{line-height:1.2}}
+
+/* Keep the desktop Services menu inside laptop and viewport edges */
+@media(min-width:801px){
+  .mega-menu{position:absolute;top:70px;left:auto;right:-250px;width:min(860px,calc(100vw - 40px));max-height:calc(100vh - 102px);overflow:auto;transform:translateY(10px)}
+  .services-nav:before{content:"";position:absolute;z-index:2;top:63px;left:50%;width:14px;height:14px;background:#fff;border-left:1px solid var(--line);border-top:1px solid var(--line);opacity:0;visibility:hidden;transform:translateX(-50%) rotate(45deg);transition:.2s}
+  .services-nav:hover:before,.services-nav:focus-within:before{opacity:1;visibility:visible}
+  .services-nav:hover .mega-menu,.services-nav:focus-within .mega-menu{transform:translateY(0)}
+}
